@@ -1,0 +1,39 @@
+.app {
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    
+  }
+  header{
+    height: 50px;
+  }
+  .main-content{
+    flex: 1;
+    /* overflow-y: scroll; */
+    overflow-x: hidden;
+    display: flex;
+  }
+  .sidebar{
+    height: 100%;
+  }
+  .right{
+    flex: 1;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  .content{
+    min-height: 500px;
+    padding: 10px;
+  }
+  /* .container {
+    display: flex;
+    flex: 1;
+  }
+  
+  .main-content {
+    flex: 1;
+    padding: 20px;
+  } */

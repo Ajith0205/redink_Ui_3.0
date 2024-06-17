@@ -1,0 +1,71 @@
+/* .data-table-container {
+    margin: 20px auto;
+    padding: 10px;
+    background-color: rgb(243, 215, 215);
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+   
+}
+
+.data-table-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+} */
+html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.data-table-container {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+    height: 100%;
+    margin: 0 auto;
+    padding: 5px;
+    background-color: rgb(243, 215, 215);
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.data-table-wrapper {
+    flex: 1;
+    overflow: auto;
+}
+
+
+.button-container {
+    display: flex;
+    justify-content: flex-end; /* Aligns items to the right */
+    margin-bottom: 10px;
+    margin-top: 10px;
+    margin-right: 10px;
+    
+}
+.ations{
+    display: flex;
+    justify-content: auto;
+}
+
+.primary-button {
+    background-color: #007bff; /* Primary color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.primary-button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* @media (min-width: 576px) */
+.modal-dialog {
+    /* max-width: 500px; */
+    margin: 1.75rem auto;
+}
