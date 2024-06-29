@@ -4,9 +4,10 @@ import { useState } from 'react';
 import axios from 'axios';
 import { Base_Url } from '../Service/Constant';
 import '../Style/Login.css';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import loginimg from '../Asset/imresizer-1719407171937.jpg'
 function Login() {
-   const [inputs, setInputs] = useState({ username: '', password: '' });
+  const [inputs, setInputs] = useState({ username: '', password: '' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -65,37 +66,49 @@ function Login() {
 
   return (
     <div className="login-container">
-      <h2>Login</h2>
-      {errors.message && <p className="error-message">{errors.message}</p>}
-      <form onSubmit={handleSubmit} className="login-form">
-        <div className="form-group">
-          <label htmlFor="username">Username:</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            value={inputs.username}
-            onChange={handleChange}
-            required
-          />
+      <div className="image-container">
+        <img src={loginimg} alt="Red Ink" className="side-image" />
+      </div>
+      <div className="form-container">
+        <div className="form-card">
+          <h2>Login</h2>
+          {errors.message && <p className="error-message">{errors.message}</p>}
+          <form onSubmit={handleSubmit} className="login-form">
+            <div className="form-group">
+              <label htmlFor="username">Username:</label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={inputs.username}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="password">Password:</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={inputs.password}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <button type="submit" disabled={loading} className="submit-button">
+              {loading ? 'Logging in...' : 'Login'}
+            </button>
+          </form>
+          <div className="forgot-password">
+            {/* <a href="/forgot-password">Forgot Password?</a> */}
+            <Link to="/forgotpassword">Forgot Password?</Link>
+          </div>
         </div>
-        <div className="form-group">
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={inputs.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit" disabled={loading} className="submit-button">
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
+      </div>
     </div>
   );
+
 
   
 }

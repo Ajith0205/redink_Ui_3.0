@@ -3,368 +3,368 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Base_Url } from '../Service/Constant';
 import '../Style/Home.css';  // Ensure this path is correct
+import EventList from '../View/EventList';
+
+
+
 
 function Home() {
-  var [eventData, setEventData] = useState([]);
-  const [showPopup, setShowPopup] = useState(false);
-
-  const [editPopup, setEditPopup] = useState(false);
-  const [editEventDetails, setEditEventDetails] = useState({});
-
-  const [newEvent, setNewEvent] = useState({
-    image: '',
-    eventName: '',
-    eventDate: '',
-    eventPlace: ''
-  });
-
-  var navigate = useNavigate();
+  const [eventData, setEventData] = useState([]);
+  const [videoUrls, setVideoUrls] = useState([]);
+  const [userDetails, setUserDetails] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [url, setUrl] = useState('');
   const token = localStorage.getItem("token");
+  const role=localStorage.getItem("role");
+  const userId= userDetails.userId !=null ? userDetails.userId : localStorage.getItem("id"); 
+
+  useEffect(() => {
+    usersList();
+}, []);
+
+const usersList = () => {
+    axios({
+        method: "get",
+        headers: { Authorization: token },
+        url: Base_Url + "user/getAllUsers",
+    }).then((response) => {
+        setUsers(response.data.users);
+    }).catch(error => {
+        console.log(error);
+    });
+};
 
   useEffect(() => {
     eventUploadList();
-  }, []);
+    allVideos();
+  }, [userId]);
 
   const eventUploadList = () => {
     axios({
       method: "get",
       headers: { Authorization: token },
-      url: Base_Url + "event/uploadList",
+      url: Base_Url + "event/user/eventGet?userId="+userId,
     }).then((response) => {
       setEventData(response.data.dto.eventList);
-    }, error => {
+    }).catch(error => {
       console.log(error);
     });
   };
 
-
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewEvent({
-      ...newEvent,
-      [name]: value
-    });
-  };
-
-  const handleFileChange = (e) => {
-    // const file = e.target.files[0];
-    // const reader = new FileReader();
-    // fileReader.readAsDataURL(files[0]);
-
-    let files = e.target.files;
-    let fileReader = new FileReader();
-    fileReader.readAsDataURL(files[0]);
-
-    fileReader.onloadend = () => {
-
-      setNewEvent({
-        ...newEvent,
-        image: fileReader.result
-      });
-    };
-    // reader.readAsDataURL(file);
-  };
-
-  const handleAddEvent = () => {
-
-    console.log("newEvent", newEvent);
-
+  const allVideos = () => {
     axios({
-      method: "post",
+      method: "get",
       headers: { Authorization: token },
-      url: "http://192.168.1.143:8008/event/upload",
-      data: newEvent,
-
-      // status:""
+      url: Base_Url + "videoUpload/userBasedVideos?userId="+userId,
     }).then((response) => {
-      console.log("Event Uploads", response.data)
-      var notice = response.data.dto.event.image
-      console.log("da", notice);
-      // console.log(response.data.status);
-      if (response.data.status) {
-        eventUploadList();
-        setShowPopup(false);
-        setNewEvent({
-          image: '',
-          eventName: '',
-          eventDate: '',
-          eventPlace: ''
-        });
-        // window.location.reload();
-      }
-
-    }, error => {
+      setVideoUrls(response?.data?.dto?.videoUploadsList);
+    }).catch(error => {
       console.log(error);
-    })
-
-
+    });
   };
 
-  const handleEdit = (row) => {
-    // Implement edit functionality using row data
-    console.log('Editing row:', row);
-    setEditPopup(true);
-    setEditEventDetails(row);
-  };
-  const handleDelete = (row) => {
-
-    console.log('Deleting row:', row);
-
+ const deleteVideo = (id) => {
     axios({
-      method: "DELETE",
+      method: "delete",
       headers: { Authorization: token },
-      url: Base_Url + "event/eventdelete?id=" + row.id,
-      //data:inputs
+      url: Base_Url + "videoUpload/delete/" + id,
     }).then((response) => {
       console.log(response);
-      if (response?.data?.status) {
-        eventUploadList();
-
-      }
-
-
+      allVideos();
+    }, error => {
+      console.log(error);
     })
-  };
-
-  const handleOnUpdate = (e) => {
-    e.preventDefault();
-    let name = e.target.name;
-    console.log("name", name);
-    if (name != "image") {
-      let value = e.target.value;
-      // console.log("name",value);
-      setEditEventDetails(preValue => ({ ...preValue, [name]: value }))
-    } else {
-      let files = e.target.files;
-      let fileReader = new FileReader();
-      // console.log("shdfgshj",files);
-      fileReader.readAsDataURL(files[0]);
-
-      fileReader.onload = (event) => {
-        let value = event.target.result;
-        //  console.log("value", value)
-        setEditEventDetails(preValue => ({ ...preValue, [name]: value }))
-      }
-
-    }
   }
 
-
-  const handleUpdateEvent = () => {
-    // Edit event logic here
-    console.log("editEventDetails", editEventDetails);
-    axios({
-      method: "PUT",
-      headers: { Authorization: token },
-      url: Base_Url + "event/update?id=" + editEventDetails?.id,
-      data: editEventDetails,
-    }).then((response) => {
-      console.log(response);
-
-      if (response.data.status) {
-        eventUploadList();
-        setEditPopup(false);
-        setEditEventDetails({});
-      }
-
-    })
-
-
-
-
+  const config1 = {
+    headers: { Authorization: `${token}` },
+    responseType: "blob",
+    'content-type': 'application/json',
   };
 
-  const handleDeleteImage = (id) => {
-    // Delete image logic here
-    console.log("id", id);
-    axios({
-      method: "DELETE",
-      headers: { Authorization: token },
-      url: Base_Url + "event/image/" + id,
-    }).then((response) => {
-      console.log(response);
-      if (response?.data?.status) {
-        eventUploadList();
-        setEditPopup(false);
-        setEditEventDetails({});
-      }
-    })
 
+  const downloadVideo = (id) => {
+    axios.get(Base_Url+"videoUpload/downloadVideo/" + id, config1).then((res) => {
+      
+      const href = URL.createObjectURL(res.data);
 
+      var filename = res.headers.pragma;
+      const link = document.createElement("a");
+      link.href = href;
+      link.target = "_blank";
+      link.setAttribute("download", filename); //or any other extension
+      document.body.appendChild(link);
+      link.click();
+    }).catch((error) => {
+      console.error('Error during download:', error);
+    });
+  }
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setUserDetails({ ...userDetails, [name]: value });
+   
   };
 
   return (
     <div className="container">
-      <div className=''>
-        <div className='d-flex justify-content-between'>
-          <h3>Events</h3>
-          <button className="btn btn-primary" onClick={() => setShowPopup(true)}>
-            Add Event
-          </button>
-
-        </div>
-        <div className=''>
-          <div className='row'>
-            {
-              eventData != null ? eventData.map((event, index) => (
-                <div key={index} className="col-lg-12">
-                  <div className='card'>
-                    <div className="mt-5 mb-5 p-5">
-                      <img src={event?.image} alt={event?.eventName} className="img-fluid event-image" />
-                      <div className='row mt-2'>
-                        <div className='col-3'>
-                          <label>Event Name: {event?.eventName}</label>
-                        </div>
-                        <div className='col-3'>
-                          <label>Date: {event?.eventDate}</label>
-                        </div>
-                        <div className='col-3'>
-                          <label>Place: {event?.eventPlace}</label>
-                        </div>
-                        <div className='col-3 text-end'>
-                          {/* <button className="btn btn-warning me-2" onClick={() => handleEdit(event)}>
-                        Edit
-                      </button> */}
-
-                          <span style={{ cursor: 'pointer', color: "blue" }} onClick={() => handleEdit(event)}>
-                            <svg token="edit" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16" tooltip="Edit">
-                              <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                              <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-                            </svg>
-                          </span>
-
-                          {/* <button className="btn btn-danger" onClick={() => handleDelete(event)}>
-                        Delete
-                      </button> */}
-
-                          <span tooltip="Delete" style={{ cursor: 'pointer', color: "red" }}> <svg onClick={() => handleDelete(event)} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16" >
-                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
-                          </svg></span>
-                        </div>
+      <div className="card">
+        <div className="card-header d-flex justify-content-between align-items-center">
+          <h4 className="header-title">Home</h4>
+          {
+                      role == "ADMIN" &&
+                      <div   className='input-field'>
+                      <label className='form-label'></label>
+                       <select
+            id="userId"
+            className="form-control user-select"
+            name="userId"
+            value={userDetails.userId}
+            onChange={(e) => handleInputChange(e)}
+          >
+            <option selected>--- Select User ---</option>
+            {users?.map((item) => (
+              <option value={item?.id}>{item?.username}</option>
+            ))}
+          </select>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              )) : <div><h3 style={{ textAlign: "center" }}>No Event Found</h3></div>
-            }
-          </div>
-
-          {showPopup && (
-            <div className="popup">
-              <div className="popup-inner">
-                <h2>Add Event</h2>
-                <div className="form-group">
-                  <label>Event Name</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="eventName"
-                    value={newEvent.eventName}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Event Date</label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    name="eventDate"
-                    value={newEvent.eventDate}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Event Place</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="eventPlace"
-                    value={newEvent.eventPlace}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Event Image</label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    onChange={handleFileChange}
-                  />
-
-                </div>
-                <button className="btn btn-success" onClick={handleAddEvent}>Save Event</button>
-                <button className="btn btn-danger" onClick={() => setShowPopup(false)}>Cancel</button>
-              </div>
-            </div>
-          )}
-
-          {editPopup && (
-            <div className="popup">
-              <div className="popup-inner">
-                <h2>Edit Event</h2>
-                <div className="form-group">
-                  <label>Event Name</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="eventName"
-                    value={editEventDetails.eventName}
-                    onChange={handleOnUpdate}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Event Date</label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    name="eventDate"
-                    value={editEventDetails.eventDate}
-                    onChange={handleOnUpdate}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Event Place</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="eventPlace"
-                    value={editEventDetails.eventPlace}
-                    onChange={handleOnUpdate}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Event Image</label>
-                  <input
-                    type="file"
-                    name='image'
-                    className="form-control"
-                    // defaultValue={editEventDetails.image}
-                    onChange={handleOnUpdate}
-                  />
-                  <div className='d-flex'>
-
-                    <img src={editEventDetails?.image} style={{ width: "100px", height: "100px" }} />
-                    <span tooltip="Delete" style={{ cursor: 'pointer', color: "red" }}> <svg onClick={() => handleDeleteImage(editEventDetails.id)} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16" >
-                      <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
-                    </svg></span>
-                  </div>
-                </div>
-                <button className="btn btn-success" onClick={handleUpdateEvent}>Update</button>
-                <button className="btn btn-danger" onClick={() => setEditPopup(false)}>Cancel</button>
-              </div>
-            </div>
-          )}
-
+                    }
+                   
         </div>
-
+        <div className="card-body">
+          <EventList eventData={eventData} eventUploadList={eventUploadList} />
+          {videoUrls?.map((video, index) => (
+            <div className="card mb-3" key={index}>
+              <div className="card-body">
+                <div className="video-row">
+                  <div
+                    className="video-container"
+                    onClick={() => {
+                      setUrl(video?.fileName);
+                      document.getElementById("videoprev").load();
+                    }}
+                  >
+                    <video
+                      className="gallery_item_video"
+                      style={{ cursor: "pointer" }}
+                      data-bs-target="#viewgalleryvideo"
+                      data-bs-toggle="modal"
+                      autoPlay
+                      loop
+                      muted
+                    >
+                      <source src={video?.fileName} />
+                    </video>
+                  </div>
+                  <span
+                    onClick={() => downloadVideo(video?.id)}
+                    style={{ cursor: "pointer", color: "blue" }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className="bi bi-download"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
+                      <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z" />
+                    </svg>
+                  </span>
+                  {video.deleteStatus && (
+                    <span
+                      onClick={() => deleteVideo(video?.id)}
+                      style={{ cursor: "pointer", color: "red" }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        className="bi bi-trash-fill"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
+                      </svg>
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-
-
-
-
+      <div
+        className="modal fade"
+        id="viewgalleryvideo"
+        tabIndex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered" role="document">
+          <div className="modal-content">
+            <div className="modal-body home_image">
+              <div className="overlayText">
+                <div className="right-button">
+                  <button
+                    type="button"
+                    className="btn btn-link"
+                    onClick={() => {
+                      document.getElementById("videoprev").pause();
+                    }}
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <svg
+                      tooltip="Close"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      fill="currentColor"
+                      className="bi bi-x"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div className="img_container">
+                <video
+                  id="videoprev"
+                  className="preview_video"
+                  style={{ cursor: "pointer" }}
+                  src={url}
+                  type="video/mp4"
+                  autoPlay
+                  loop
+                  controls
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
+  
+  // return (
+  //   <div className="container">
+    
+  //     <div className="card">
+  //       <div className='card-header'>
+  //       <h4 textAlign="center">Home</h4>
+  //       { 
+  //                     role == "ADMIN" && 
+  //                     <select
+  //                     id="userId"
+  //                     className="form-control"
+  //                     name="userId"
+  //                     value={userDetails.userId}
+  //                     onChange={(e) =>
+  //                       handleInputChange(e)
+  //                     }
+  //                   >
+                   
+  //                       <option selected>
+  //                         --- Select User ---
+  //                       </option>
+                     
+  //                     {users?.map((item) => {
+  //                       return (
+  //                         <option value={item?.id}>{item?.username}</option>
+  //                       );
+  //                     })}
+  //                   </select>   }
+      
+  //       </div>
+      
+  //       <div className="card-body">
+  //         <EventList eventData={eventData} eventUploadList={eventUploadList} />
+  //         {videoUrls?.map((video, index) => (
+  //           <div className="card mb-3" key={index}>
+  //             <div className="card-body">
+  //               <div className="video-row">
+  //                 <div
+  //                   className="video-container"
+  //                   onClick={() => {
+  //                     setUrl(video?.fileName);
+  //                     document.getElementById('videoprev').load();
+  //                   }}
+  //                 >
+  //                   <video
+  //                     className="gallery_item_video"
+  //                     style={{ cursor: 'pointer' }}
+  //                     data-bs-target="#viewgalleryvideo"
+  //                     data-bs-toggle="modal"
+  //                     autoPlay
+  //                     loop
+  //                     muted
+  //                   >
+  //                     <source src={video?.fileName} />
+  //                   </video>
+  //                 </div>
+                  
+  //                 <span onClick={() => downloadVideo(video?.id)} style={{ cursor: 'pointer', color: 'blue' }}>
+  //                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-download" viewBox="0 0 16 16">
+  //                     <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+  //                     <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+  //                   </svg>
+  //                 </span>
+                  
+  //                 {video.deleteStatus && (
+  //                   <span onClick={() => deleteVideo(video?.id)} style={{ cursor: 'pointer', color: 'red' }}>
+  //                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash-fill" viewBox="0 0 16 16" >
+  //                       <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+  //                     </svg>
+  //                   </span>
+  //                 )}
+  //               </div>
+  //             </div>
+  //           </div>
+  //         ))}
+  //       </div>
+  //     </div>
+  
+  //     <div className="modal fade" id="viewgalleryvideo" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  //       <div className="modal-dialog modal-dialog-centered" role="document">
+  //         <div className="modal-content">
+  //           <div className="modal-body home_image">
+  //             <div className="overlayText">
+  //               <div className="right-button">
+  //                 <button
+  //                   type="button"
+  //                   className="btn btn-link"
+  //                   onClick={() => { document.getElementById('videoprev').pause(); }}
+  //                   data-bs-dismiss="modal"
+  //                   aria-label="Close"
+  //                 >
+  //                   <svg tooltip="Close" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-x" viewBox="0 0 16 16">
+  //                     <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+  //                   </svg>
+  //                 </button>
+  //               </div>
+  //             </div>
+  //             <div className="img_container">
+  //               <video
+  //                 id="videoprev"
+  //                 className="preview_video"
+  //                 style={{ cursor: 'pointer' }}
+  //                 src={url}
+  //                 type="video/mp4"
+  //                 autoPlay
+  //                 loop
+  //                 controls
+  //               />
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
+  
 }
-
 export default Home;

@@ -1,0 +1,84 @@
+.container {
+    padding: 20px;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .card {
+   
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   
+  }
+  
+  .event-image {
+    width: 100%;
+    height: auto;
+    max-width: 350px;
+    max-height: 400px;
+}
+  
+  .popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .popup-inner {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    max-width: 80%;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .text-end {
+    text-align: end;
+  }
+  
+  .d-flex {
+    display: flex;
+  }
+  
+  .justify-content-between {
+    justify-content: space-between;
+  }
+  
+  .align-items-center {
+    align-items: center;
+  }
+  
+  modal-dialog {
+    /* max-width: 500px; */
+    margin: 1.75rem auto;
+  }
+  
+  
+  .noEvent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+    text-align: center;
+    background-color: #f9f9f9; /* Optional: background color */
+  }
+  
+  .noEvent h3 {
+    font-size: 24px; /* Adjust font size as needed */
+    color: rgb(243, 10, 10); /* Optional: text color */
+  }

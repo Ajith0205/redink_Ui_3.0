@@ -31,7 +31,7 @@ function Video() {
 
 
   const allVideos = () => {
-    // axios.get("http://192.168.1.143:8008/videoUpload/videoList",  headers: { Authorization: token })
+  
     axios({
       method: "get",
       headers: { Authorization: token },
@@ -83,9 +83,8 @@ function Video() {
 
 
   const downloadVideo = (id) => {
-    console.log("url", "http://192.168.1.143:8008/videoUpload/downloadVideo/" + id);
-    axios.get("http://192.168.1.143:8008/videoUpload/downloadVideo/" + id, config1).then((res) => {
-      console.log("dfdfddgg", res);
+    axios.get(Base_Url+"videoUpload/downloadVideo/" + id, config1).then((res) => {
+      
       const href = URL.createObjectURL(res.data);
 
       var filename = res.headers.pragma;
@@ -227,17 +226,13 @@ function Video() {
       <div className="card">
         <div className="card-header">
           <h3 className="card-title">Videos</h3>
-          {/* <button className="btn btn-primary" onClick={() => setShowPopup(true)}>
-            Add Video
-          </button> */}
-
-{/* className="tooltip" */}
+  
           <span onClick={() => setShowPopup(true)} style={{ float: 'right', cursor: 'pointer', marginRight: '10px',color: 'blue' }}>
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
   <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
   <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
 </svg>
-{/* <span className="tooltiptext">Add Video</span> */}
+
           </span>
         </div>
         <div className="card-body">
@@ -262,25 +257,22 @@ function Video() {
                   <source src={video?.fileName} />
                 </video>
               </div>
-              {/* <button
-                className="download-button"
-                onClick={() => downloadVideo(video?.id)}
-              >
-                Download video
-              </button>  className="tooltip"*/}
+            
               <span  onClick={() => downloadVideo(video?.id)}  style={{ cursor: 'pointer', color: 'blue' }}>
               <svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
   <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
   <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
 </svg>
-{/* <span className="tooltiptext">Download</span>   className="tooltip"*/}
-              </span>
 
-              <span onClick={() => deleteVideo(video?.id)} style={{ cursor: 'pointer', color: 'red' }}> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16" >
-                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
-              </svg>
-              {/* <span className="tooltiptext">Delete</span> */}
               </span>
+              {
+               video.deleteStatus &&
+               <span onClick={() => deleteVideo(video?.id)} style={{ cursor: 'pointer', color: 'red' }}> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16" >
+               <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
+             </svg>
+             </span>
+              }
+             
 
             </div>
           ))}
@@ -326,9 +318,18 @@ function Video() {
         <div className="card">
           <div className="popup">
             <div className="popup-inner">
-              <div className="card-header">
+              
+
+              <div className="d-flex justify-content-between align-items-center">
+             
                 <h2>Add Video</h2>
-              </div>
+            
+        <span onClick={() => setShowPopup(false)} style={{ cursor: 'pointer', color: "red" }}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-x-lg" viewBox="0 0 16 16">
+            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+          </svg>
+        </span>
+      </div>
               <div className="card-body">
                 <div className="form-group">
                   <label>videos</label>
@@ -342,9 +343,9 @@ function Video() {
                   <label>Description</label>
                   <input className='form-control' type="text" name="description" value={multidescription} onChange={handleMultiDescriptionChange} />
                 </div>
-                <div className='d-flex'>
+                <div className='' style={{alignItems :"center"}}>
                   <button className='btn btn-success' onClick={handlemultiUpload}  >Upload</button>
-                  <button className="btn btn-danger" onClick={() => setShowPopup(false)}>Cancel</button>
+                 
                 </div>
               </div>
             </div>

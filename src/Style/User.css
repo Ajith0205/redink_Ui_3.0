@@ -51,7 +51,7 @@ html, body, #root {
 }
 
 .primary-button {
-    background-color: #007bff; /* Primary color */
+    background-color: #007bff; 
     color: white;
     border: none;
     border-radius: 5px;

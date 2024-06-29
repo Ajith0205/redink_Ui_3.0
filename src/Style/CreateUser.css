@@ -9,3 +9,7 @@
     background-color: aquamarine;
   }
   
+  .img-fluid {
+    max-width: 100px;
+    height: 100px;
+}

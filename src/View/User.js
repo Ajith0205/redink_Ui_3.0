@@ -30,8 +30,7 @@ const customStyles = {
         right: '10px',
         cursor: 'pointer',
         color: 'red',
-        // height: '20px',
-        // width: '20px',
+      
     }
 };
 
@@ -49,9 +48,17 @@ const User = () => {
         headers: { Authorization: token },
     };
 
-    const handleDelete = (row) => {
-        // Implement delete functionality using row data
-        console.log('Deleting row:', row);
+    const handleDelete = (id) => {
+
+        // alert("deleted");
+        // console.log('Deleting row:', id);
+        axios.delete(Base_Url + "user/deleteUser?id=" + id, config).then((res) => {
+            // console.log(res);
+            
+            if (res?.data?.status) {
+                usersList();
+            }
+        })
     };
 
     const handleViewPhoto = (photoUrl) => {
@@ -93,7 +100,6 @@ const User = () => {
         let userId = tempUser[index].id
 
         axios.get(Base_Url+"user/statusChange?id="+userId +"&status="+status,config).then((res)=>{
-            // console.log("res",res);
             if(res?.data?.status){
                 usersList()
             }
@@ -111,7 +117,7 @@ const User = () => {
             cell: (row) => (
                 <div>
                     {row.profile ? (
-                        <button onClick={() => handleViewPhoto(row.profile)}>View Photo</button>
+                        <button onClick={() => handleViewPhoto(row.profile)}>  <img src={row.profile} alt="Profile" style={{ width: "50px", height: "50px" }} /> </button>
                     ) : (
                         <span>No Photo</span>
                     )}
@@ -143,7 +149,7 @@ const User = () => {
 
                  
                    
-                <span tooltip="Delete"> <svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16" >
+                <span tooltip="Delete"  onClick={() => handleDelete(row.id)}> <svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16" >
                 <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
               </svg></span> 
 
@@ -197,8 +203,8 @@ const User = () => {
             >
                 <img src={selectedPhoto} alt="User Photo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 <div style={customStyles.closeButton} onClick={closeModal}><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-  <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
-</svg></div>
+                 <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+               </svg></div>
             </Modal>
         </div>
     );
