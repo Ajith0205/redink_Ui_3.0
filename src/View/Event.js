@@ -134,13 +134,13 @@ function Event() {
   
     const handleEdit = (row) => {
       // Implement edit functionality using row data
-      console.log('Editing row:', row);
+      // console.log('Editing row:', row);
       setEditPopup(true);
       setEditEventDetails(row);
     };
     const handleDelete = (row) => {
   
-      console.log('Deleting row:', row);
+      // console.log('Deleting row:', row);
   
       axios({
         method: "DELETE",
@@ -161,7 +161,7 @@ function Event() {
     const handleOnUpdate = (e) => {
       e.preventDefault();
       let name = e.target.name;
-      console.log("name", name);
+      // console.log("name", name);
       if (name != "image") {
         let value = e.target.value;
         // console.log("name",value);
@@ -250,24 +250,25 @@ function Event() {
     return (
       <div className="container">
         <div className=''>
-          <div className='d-flex justify-content-between' style={{backgroundColor:"bisque"}} >
-            <h3 style={{textAlign:"center"}}>Events</h3>    
-  
-              <span onClick={() => setShowPopup(true)} style={{ float: 'right', cursor: 'pointer', marginRight: '10px',marginTop:'5px',color: 'blue' }}>
+          <div className='row' style={{backgroundColor:"bisque"}} >
+            <h3 style={{textAlign:"center"}}>Events <span onClick={() => setShowPopup(true)} style={{ float: 'right', cursor: 'pointer', marginRight: '10px',marginTop:'5px',color: 'blue' }}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
               </svg>
   
-            </span>
+            </span></h3>    
+  
+              
   
           </div>
           <div className=''>
             <div className='row'>
               {
                 eventData != null ? eventData.map((event, index) => (
-                  <div key={index} className="col-lg-12">
+                  <div key={index} className="col-lg-12 p-0">
                     <div className='card'>
+              
                       <div className="mt-5 mb-5 p-5 d-flex">
                       <span onClick={() => handleViewPhoto(event?.image)}>  <img src={event?.image} alt={event?.eventName} className="img-fluid event-image"  /> </span> 
                         <div className='row mt-2' style={{marginLeft:"50px"}}>
