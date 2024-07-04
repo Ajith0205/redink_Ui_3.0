@@ -31,7 +31,6 @@ const [dropdownOpen, setDropdownOpen] = useState(false);
   }, [id, token]);
 
   function editprofile() {
-    // console.log("id", id);
     localStorage.setItem("editUserId", user.id);
     localStorage.setItem("profileId", user.id);
     navigate("/createuser");
@@ -39,17 +38,19 @@ const [dropdownOpen, setDropdownOpen] = useState(false);
   }
 
   function changepassword (){
-    const modal = document.getElementById('imagepreview');
+    // const modal = document.getElementById('imagepreview');
   
-    if (modal) {
-      const bsModal = new window.bootstrap.Modal(modal); // Initialize Bootstrap modal
-      bsModal.hide(); // Hide the modal after the animation completes
-    }
+    // if (modal) {
+    //   const bsModal = new window.bootstrap.Modal(modal); // Initialize Bootstrap modal
+    //   bsModal.hide(); // Hide the modal after the animation completes
+    // }
     
-    // Delay navigation slightly to ensure modal is fully hidden
-    setTimeout(() => {
-      navigate("/changepassword");
-    }, 300); 
+    // // Delay navigation slightly to ensure modal is fully hidden
+    // setTimeout(() => {
+      
+    // }, 300); 
+  
+    navigate("/changepassword");
    
   }
 
@@ -83,7 +84,7 @@ const [dropdownOpen, setDropdownOpen] = useState(false);
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="imagePreviewModalLabel">Profile Image</h5>
-              <button type="button" className="close" data-bs-dismiss="modal" aria-label="Close">
+              <button type="button" style={{ border: "none",cursor:"pointer",backgroundColor:"transparent",color:"red",fontSize:"30px" }} className="close" data-bs-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
@@ -94,7 +95,7 @@ const [dropdownOpen, setDropdownOpen] = useState(false);
             </div>
             <div className="modal-footer d-flex justify-content-between">
             <button type="button" data-bs-dismiss="modal" className="btn btn-primary" onClick={editprofile} >View Profile</button>
-       <button className="btn btn-primary" type='button' onClick={changepassword} >Change Password</button>    
+       <button className="btn btn-primary" type='button' data-bs-dismiss="modal" onClick={changepassword} >Change Password</button>    
        
               </div>
           </div>
